@@ -7,12 +7,15 @@ import shutil
 
 # Initialize the screen
 stdscr = curses.initscr()
+# Remove cursor
+curses.curs_set(0)
 
 # Initialize color pairs
 curses.start_color()
 curses.init_pair(1, curses.COLOR_GREEN, curses.COLOR_BLACK)
 curses.init_pair(2, curses.COLOR_BLUE, curses.COLOR_BLACK)
 curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK)
+curses.init_pair(4, curses.COLOR_YELLOW, curses.COLOR_BLACK)
 
 # Generate random positions for the "+" symbols
 num_symbols = 300
@@ -108,7 +111,7 @@ try:
         for i, line in enumerate(pic.split("\n")):
             if pic_x + len(line) > curses.COLS:
                 break
-            stdscr.addstr(pic_y + i, pic_x, line, curses.color_pair(1))
+            stdscr.addstr(pic_y + i, pic_x, line, curses.color_pair(2))
 
         # Move the second picture
         pic2_x += pic2_dir * pic2_speed
@@ -119,7 +122,7 @@ try:
         for i, line in enumerate(pic2.split("\n")):
             if pic2_x + len(line) > curses.COLS:
                 break
-            stdscr.addstr(pic2_y + i, pic2_x, line)
+            stdscr.addstr(pic2_y + i, pic2_x, line, curses.color_pair(4))
 
         # Move the third picture
         pic3_x += pic3_dir * pic3_speed
@@ -130,7 +133,7 @@ try:
         for i, line in enumerate(pic3.split("\n")):
             if pic3_x + len(line) > curses.COLS:
                 break
-            stdscr.addstr(pic3_y + i, pic3_x, line)
+            stdscr.addstr(pic3_y + i, pic3_x, line, curses.color_pair(3))
             
          # Move the fourth picture
         pic4_x += pic4_dir * pic4_speed
@@ -141,7 +144,7 @@ try:
         for i, line in enumerate(pic4.split("\n")):
             if pic4_x + len(line) > curses.COLS:
                 break
-            stdscr.addstr(pic4_y + i, pic4_x, line, curses.color_pair(3))
+            stdscr.addstr(pic4_y + i, pic4_x, line, curses.color_pair(1))
 
         # Move the UFO
         ufo1_x += ufo1_dir * ufo1_speed
