@@ -5,9 +5,10 @@ import time
 import random
 import shutil
 
+
 # Initialize the screen
 stdscr = curses.initscr()
-# Remove cursor
+# Do not display cursor 
 curses.curs_set(0)
 
 # Initialize color pairs
@@ -29,9 +30,9 @@ for i in range(num_symbols):
 # Set the starting position, direction (1 for right, -1 for left) and speed of the first picture
 pic_y,pic_x,pic_dir,pic_speed = 12,0,1,2
 pic2_y,pic2_x,pic2_dir,pic2_speed=20,curses.COLS -1,-1,2
-pic3_y,pic3_x,pic3_dir,pic3_speed=40,curses.COLS -1,-1,1
-pic4_y,pic4_x,pic4_dir,pic4_speed=30,0,1,2
-ufo1_x, ufo1_y, ufo1_dir, ufo1_speed = 0, 5, 1, 1
+pic3_y,pic3_x,pic3_dir,pic3_speed=35,curses.COLS -1,-1,1
+alien1_y,alien1_x,alien1_dir,alien1_speed=30,0,1,1
+ufo1_x, ufo1_y, ufo1_dir, ufo1_speed=7, 3, 1, 1
 
 ufo1 = r"""                 
          .-""`""-.    
@@ -75,16 +76,25 @@ pic3 = r"""
           _H_       
 """
 
-pic4 = r"""
-     .  .      
-      \/       
-     (@@)      
-  g/\_)(_/\e   
- g/\(=--=)/\e   
-     //\\      
-    _|  |_        
+alien1 = r"""
+    .  .      
+     \/       
+    (@@)      
+ g/\_)(_/\e   
+g/\(=--=)/\e   
+    //\\      
+   _|  |_ 
 """
 
+alien2 = r"""
+     .  .      
+      \/       
+  g\ (@@) /e     
+ g\ \_)(_/ /e  
+   \(=--=)/   
+     //\\      
+    _|  |_    
+"""
 
 try:
     while True:
@@ -135,16 +145,18 @@ try:
                 break
             stdscr.addstr(pic3_y + i, pic3_x, line, curses.color_pair(3))
             
-         # Move the fourth picture
-        pic4_x += pic4_dir * pic4_speed
-        if pic4_x <= 0 or pic4_x >= curses.COLS - 1:
-            pic4_dir = -pic4_dir
+        # Move the alien
+        alien1_x += alien1_dir * alien1_speed
+        if alien1_x <= 0 or alien1_x + 7 >= 80:
+            alien1_dir = 1 if alien1_dir == -1 else -1
 
-        # Display the fourth picture
-        for i, line in enumerate(pic4.split("\n")):
-            if pic4_x + len(line) > curses.COLS:
-                break
-            stdscr.addstr(pic4_y + i, pic4_x, line, curses.color_pair(1))
+        # Display the alien
+        current_alien1 = alien1 if alien1_dir == 1 else alien2
+        for i, line in enumerate(current_alien1.split("\n")):
+            stdscr.addstr(alien1_y + i, alien1_x, line, curses.color_pair(1))
+
+        # Swap the alien images
+        alien1, alien2 = alien2, alien1
 
         # Move the UFO
         ufo1_x += ufo1_dir * ufo1_speed
@@ -175,4 +187,3 @@ finally:
 
 
  
-
