@@ -16,9 +16,10 @@ curses.init_pair(1, curses.COLOR_GREEN, curses.COLOR_BLACK)
 curses.init_pair(2, curses.COLOR_BLUE, curses.COLOR_BLACK)
 curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK)
 curses.init_pair(4, curses.COLOR_YELLOW, curses.COLOR_BLACK)
+curses.init_pair(5, curses.COLOR_MAGENTA, curses.COLOR_BLACK)
 
 # Generate random positions for the "+" symbols
-num_symbols = 300
+num_symbols = 500
 width, height = shutil.get_terminal_size()
 positions = []
 for i in range(num_symbols):
@@ -36,78 +37,77 @@ ufo1_x, ufo1_y, ufo1_dir, ufo1_speed = 7, 3, 1, 1
 planet_x, planet_y, planet_dir, planet_speed = 0, 2, 1, 1
 planet_delay = 5  # Delay before the planet starts moving
 
-ufo1 = r"""                 
-         .-""`""-.    
-   ~~ _/`oOoOoOoOo`\_ ~~
-  ~~ '.-=-=-=-=-=-=-.' ~~
-   ~~  `-=.=-.-=.=-'  ~~  
-          ^  ^  ^       
+ufo1 = r"""
+       .-""`""-.
+ ~~ _/`oOoOoOoOo`\_ ~~
+~~ '.-=-=-=-=-=-=-.' ~~
+ ~~  `-=.=-.-=.=-'  ~~
+        ^  ^  ^       
 """
 
 ufo2 = r"""
-         .-""`""-.    
-    ~ _/`oOoOoOoOo`\_ ~
-   ~ '.-=-=-=-=-=-=-.' ~
-    ~  `-=.=-.-=.=-'  ~  
-          ^  ^  ^        
+       .-""`""-.
+  ~ _/`oOoOoOoOo`\_ ~
+ ~ '.-=-=-=-=-=-=-.' ~
+  ~  `-=.=-.-=.=-'  ~
+        ^  ^  ^  
 """
 
-pic = r"""                           
-            MMM8&&&.         
-       _...MMMMM88&&&&..._   
-    .::'''MMMMM88&&&&&&'''::.
-    ::    MMMMM88&&&&&&    ::
-    '::...MMMMM88&&&&&&...::
-       `''''MMMMM88&&&&''''`  
-             'MMM8&&&'      
+pic = r""" 
+        MMM8&&&.  
+  _...MMMMM88&&&&..._
+.::'''MMMMM88&&&&&&'''::.
+::    MMMMM88&&&&&&    ::
+'::...MMMMM88&&&&&&...::
+  `''''MMMMM88&&&&''''`
+        'MMM8&&&'
 """
 
-pic2 = r"""   
-       _..._     
-     .:::::::.    
-    :::::::::::  
-    :::::::::::  
-    `:::::::::'  
-      `':::''
-
+pic2 = r""" 
+   _..._
+ .:::::::.
+:::::::::::
+:::::::::::
+`:::::::::'
+  `':::''
 """
 
-pic3 = r"""   
-          \-/
-         (@ @)
-        \ \-/
-         \/ \
-          \ /\
-          _H_       
+pic3 = r"""
+  \-/
+ (@ @)
+\ \-/
+ \/ \
+  \ /\
+  _H_
 """
 
-pic4 = r"""   
-          \-/
-         (@ @)
-        \ \-/
-         \/ \
-          \ /\
-          _H_       
+pic4 = r"""
+  \-/
+ (@ @)
+\ \-/
+ \/ \
+  \ /\
+  _H_
 """
 
 alien1 = r"""
-    .  .      
-     \/       
-    (@@)      
- g/\_)(_/\e   
-g/\(=--=)/\e   
-    //\\      
-   _|  |_ 
+    .  .
+     \/ 
+    (@@)
+ g/\_)(_/\e
+g/\(=--=)/\e
+    //\\
+   _|  |_
 """
 
 alien2 = r"""
-     .  .      
-      \/       
-  g\ (@@) /e     
- g\ \(_)/ /e  
-   \(=--=)/   
-     //\\      
-    _|  |_    
+     .  .
+      \/ 
+  g\ (@@) /e
+ g\ \(_)/ /e
+   \(=--=)/
+     //\\
+    _|  |_
 """
 
 planet = r"""
@@ -140,7 +140,6 @@ planet = r"""
              `-.          .         .     .-'
                 `---.        .       .---'
                      `--------------'
-
 """
 
 # Calculate the end time for the planet delay
@@ -194,7 +193,7 @@ try:
         for i, line in enumerate(pic2.split("\n")):
             if pic2_x + len(line) > curses.COLS:
                 break
-            stdscr.addstr(pic2_y + i, pic2_x, line, curses.color_pair(4))
+            stdscr.addstr(pic2_y + i, pic2_x, line, curses.color_pair(5))
 
         # Move the third picture
         pic3_x += pic3_dir * pic3_speed
