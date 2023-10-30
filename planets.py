@@ -145,6 +145,7 @@ planet = r"""
 # Calculate the end time for the planet delay
 planet_delay_end = time.time() + planet_delay
 
+
 try:
     while True:
         # Clear the screen
@@ -154,14 +155,21 @@ try:
         if time.time() >= planet_delay_end:
             # Move the planet picture
             planet_x += planet_dir * planet_speed
-            if planet_x <= 0 or planet_x >= curses.COLS - 1:
-                planet_dir = -planet_dir
+
+            # If the planet reaches the right border, change its direction to move left
+            if planet_x + len(planet.split("\n")[0]) >= curses.COLS - 1:
+                planet_dir = -1
+
+            # If the planet reaches the left border, change its direction to move right
+            if planet_x <= 0:
+                planet_dir = 1
 
         # Display the planet picture
         for i, line in enumerate(planet.split("\n")):
-            if planet_x + len(line) > curses.COLS:
-                break
-            stdscr.addstr(planet_y + i, planet_x, line, curses.color_pair(4)) 
+            stdscr.addstr(planet_y + i, planet_x, line, curses.color_pair(4))
+
+
+
         # Display the "+" symbols
         for x, y in random.sample(positions, len(positions) // 2):
             stdscr.addstr(y, x, "+", curses.color_pair(2))
