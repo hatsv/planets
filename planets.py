@@ -27,7 +27,7 @@ for i in range(num_symbols):
     y = random.randint(0, height - 1)
     positions.append((x, y))
 
-# Set the starting position, direction (1 for right, -1 for left), and speed of the first picture
+# Set the starting position, direction (1 for right, -1 for left), and speed of the pictures
 pic_y, pic_x, pic_dir, pic_speed = 12, 0, 1, 2
 pic2_y, pic2_x, pic2_dir, pic2_speed = 20, 30, -1, 2
 pic3_y, pic3_x, pic3_dir, pic3_speed = 35, 15, -1, 1
@@ -145,6 +145,16 @@ planet = r"""
 # Calculate the end time for the planet delay
 planet_delay_end = time.time() + planet_delay
 
+# Function to check if a position is empty
+def is_position_empty(x, y):
+    return stdscr.inch(y, x) == ord(' ')
+
+# Function to draw pictures with transparency
+def draw_picture_with_transparency(x, y, text, color_pair):
+    for i, line in enumerate(text.split("\n")):
+        for j, char in enumerate(line):
+            if 0 <= x + j < curses.COLS and 0 <= y + i < curses.LINES and (char != ' ' or is_position_empty(x + j, y + i)):
+                stdscr.addch(y + i, x + j, char, curses.color_pair(color_pair) | curses.A_BOLD)
 
 try:
     while True:
@@ -164,11 +174,8 @@ try:
             if planet_x <= 0:
                 planet_dir = 1
 
-        # Display the planet picture
-        for i, line in enumerate(planet.split("\n")):
-            stdscr.addstr(planet_y + i, planet_x, line, curses.color_pair(4))
-
-
+        # Display the planet picture with transparency
+        draw_picture_with_transparency(planet_x, planet_y, planet, 4)
 
         # Display the "+" symbols
         for x, y in random.sample(positions, len(positions) // 2):
@@ -181,73 +188,43 @@ try:
             else:
                 stdscr.addstr(y, x, ".")
 
-        # Move the first picture
+        # Move and display the other pictures with transparency
+        draw_picture_with_transparency(pic_x, pic_y, pic, 2)
+        draw_picture_with_transparency(pic2_x, pic2_y, pic2, 5)
+        draw_picture_with_transparency(pic3_x, pic3_y, pic3, 3)
+        draw_picture_with_transparency(pic4_x, pic4_y, pic4, 1)
+        draw_picture_with_transparency(alien1_x, alien1_y, alien1 if alien1_dir == 1 else alien2, 1)
+        draw_picture_with_transparency(ufo1_x, ufo1_y, ufo1 if ufo1_dir == 1 else ufo2, 2)
+
+        # Move the pictures
         pic_x += pic_dir * pic_speed
         if pic_x <= 0 or pic_x + len(pic.split("\n")[0]) >= curses.COLS:
             pic_dir *= -1
 
-        # Display the first picture
-        for i, line in enumerate(pic.split("\n")):
-            if pic_x + len(line) > curses.COLS:
-                break
-            stdscr.addstr(pic_y + i, pic_x, line, curses.color_pair(2))
-
-        # Move the second picture
         pic2_x += pic2_dir * pic2_speed
         if pic2_x <= 0 or pic2_x >= curses.COLS - 1:
             pic2_dir = -pic2_dir
 
-        # Display the second picture
-        for i, line in enumerate(pic2.split("\n")):
-            if pic2_x + len(line) > curses.COLS:
-                break
-            stdscr.addstr(pic2_y + i, pic2_x, line, curses.color_pair(5))
-
-        # Move the third picture
         pic3_x += pic3_dir * pic3_speed
         if pic3_x <= 0 or pic3_x >= curses.COLS - 1:
             pic3_dir = -pic3_dir
 
-        # Display the third picture
-        for i, line in enumerate(pic3.split("\n")):
-            if pic3_x + len(line) > curses.COLS:
-                break
-            stdscr.addstr(pic3_y + i, pic3_x, line, curses.color_pair(3))
-
-        # Move the fourth picture
         pic4_x += pic4_dir * pic4_speed
         if pic4_x <= 0 or pic4_x >= curses.COLS - 1:
             pic4_dir = -pic4_dir
 
-        # Display the fourth picture
-        for i, line in enumerate(pic4.split("\n")):
-            if pic4_x + len(line) > curses.COLS:
-                break
-            stdscr.addstr(pic4_y + i, pic4_x, line, curses.color_pair(1))
-
-
         # Move the alien
         alien1_x += alien1_dir * alien1_speed
-        if alien1_x <= 0 or alien1_x + 7 >= 150:
+        if alien1_x <= 0 or alien1_x + 7 >= curses.COLS:
             alien1_dir = 1 if alien1_dir == -1 else -1
-
-        # Display the alien
-        current_alien1 = alien1 if alien1_dir == 1 else alien2
-        for i, line in enumerate(current_alien1.split("\n")):
-            stdscr.addstr(alien1_y + i, alien1_x, line, curses.color_pair(1))
 
         # Swap the alien images
         alien1, alien2 = alien2, alien1
 
         # Move the UFO
         ufo1_x += ufo1_dir * ufo1_speed
-        if ufo1_x <= 0 or ufo1_x + 7 >= 80:
+        if ufo1_x <= 0 or ufo1_x + 7 >= curses.COLS:
             ufo1_dir = 1 if ufo1_dir == -1 else -1
-
-        # Display the UFO
-        current_ufo1 = ufo1 if ufo1_dir == 1 else ufo2
-        for i, line in enumerate(current_ufo1.split("\n")):
-            stdscr.addstr(ufo1_y + i, ufo1_x, line)
 
         # Swap the UFO images
         ufo1, ufo2 = ufo2, ufo1
