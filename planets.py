@@ -5,6 +5,13 @@ import time
 import random
 import shutil
 
+def get_terminal_size():
+    try:
+        columns, lines = shutil.get_terminal_size()
+    except:
+        lines, columns = 25, 80  # Default size
+    return columns, lines
+
 # Initialize the screen
 stdscr = curses.initscr()
 # Do not display cursor
@@ -18,13 +25,15 @@ curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK)
 curses.init_pair(4, curses.COLOR_YELLOW, curses.COLOR_BLACK)
 curses.init_pair(5, curses.COLOR_MAGENTA, curses.COLOR_BLACK)
 
+# Get terminal size
+term_width, term_height = get_terminal_size()
+
 # Generate random positions for the "+" symbols
 num_symbols = 500
-width, height = shutil.get_terminal_size()
 positions = []
 for i in range(num_symbols):
-    x = random.randint(0, width - 1)
-    y = random.randint(0, height - 1)
+    x = random.randint(0, term_width - 1)
+    y = random.randint(0, term_height - 1)
     positions.append((x, y))
 
 # Set the starting position, direction (1 for right, -1 for left), and speed of the pictures
@@ -104,7 +113,7 @@ alien2 = r"""
      .  .
       \/ 
   g\ (@@) /e
- g\ \(_)/ /e
+ g\ \ )( / /e
    \(=--=)/
      //\\
     _|  |_
@@ -153,7 +162,7 @@ def is_position_empty(x, y):
 def draw_picture_with_transparency(x, y, text, color_pair):
     for i, line in enumerate(text.split("\n")):
         for j, char in enumerate(line):
-            if 0 <= x + j < curses.COLS and 0 <= y + i < curses.LINES and (char != ' ' or is_position_empty(x + j, y + i)):
+            if 0 <= x + j < term_width and 0 <= y + i < term_height and (char != ' ' or is_position_empty(x + j, y + i)):
                 stdscr.addch(y + i, x + j, char, curses.color_pair(color_pair) | curses.A_BOLD)
 
 try:
@@ -167,7 +176,7 @@ try:
             planet_x += planet_dir * planet_speed
 
             # If the planet reaches the right border, change its direction to move left
-            if planet_x + len(planet.split("\n")[0]) >= curses.COLS - 1:
+            if planet_x + len(planet.split("\n")[0]) >= term_width - 1:
                 planet_dir = -1
 
             # If the planet reaches the left border, change its direction to move right
@@ -198,24 +207,24 @@ try:
 
         # Move the pictures
         pic_x += pic_dir * pic_speed
-        if pic_x <= 0 or pic_x + len(pic.split("\n")[0]) >= curses.COLS:
+        if pic_x <= 0 or pic_x + len(pic.split("\n")[0]) >= term_width:
             pic_dir *= -1
 
         pic2_x += pic2_dir * pic2_speed
-        if pic2_x <= 0 or pic2_x >= curses.COLS - 1:
+        if pic2_x <= 0 or pic2_x >= term_width - 1:
             pic2_dir = -pic2_dir
 
         pic3_x += pic3_dir * pic3_speed
-        if pic3_x <= 0 or pic3_x >= curses.COLS - 1:
+        if pic3_x <= 0 or pic3_x >= term_width - 1:
             pic3_dir = -pic3_dir
 
         pic4_x += pic4_dir * pic4_speed
-        if pic4_x <= 0 or pic4_x >= curses.COLS - 1:
+        if pic4_x <= 0 or pic4_x >= term_width - 1:
             pic4_dir = -pic4_dir
 
         # Move the alien
         alien1_x += alien1_dir * alien1_speed
-        if alien1_x <= 0 or alien1_x + 7 >= curses.COLS:
+        if alien1_x <= 0 or alien1_x + 7 >= term_width:
             alien1_dir = 1 if alien1_dir == -1 else -1
 
         # Swap the alien images
@@ -223,7 +232,7 @@ try:
 
         # Move the UFO
         ufo1_x += ufo1_dir * ufo1_speed
-        if ufo1_x <= 0 or ufo1_x + 7 >= curses.COLS:
+        if ufo1_x <= 0 or ufo1_x + 7 >= term_width:
             ufo1_dir = 1 if ufo1_dir == -1 else -1
 
         # Swap the UFO images
