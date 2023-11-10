@@ -25,6 +25,9 @@ def initialize_colors():
     curses.init_pair(3, curses.COLOR_RED, curses.COLOR_BLACK)
     curses.init_pair(4, curses.COLOR_YELLOW, curses.COLOR_BLACK)
     curses.init_pair(5, curses.COLOR_MAGENTA, curses.COLOR_BLACK)
+    curses.init_pair(6, curses.COLOR_CYAN, curses.COLOR_BLACK)
+    curses.init_pair(7, curses.COLOR_WHITE, curses.COLOR_BLACK)
+
 
 def draw_picture_with_transparency(stdscr, x, y, text, color_pair):
     for i, line in enumerate(text.split("\n")):
@@ -51,12 +54,14 @@ try:
 
     pic_y, pic_x, pic_dir, pic_speed = 12, 0, 1, 2
     pic2_y, pic2_x, pic2_dir, pic2_speed = 20, 30, -1, 2
-    pic3_y, pic3_x, pic3_dir, pic3_speed = 35, 15, -1, 1
+    pic3_y, pic3_x, pic3_dir, pic3_speed = 35, 17, -1, 3
     pic4_y, pic4_x, pic4_dir, pic4_speed = 45, 40, 1, 1
+    pic5_y, pic5_x, pic5_dir, pic5_speed = 40, 80, 1, 3
     alien1_y, alien1_x, alien1_dir, alien1_speed = 1, 60, 1, 1
     ufo1_x, ufo1_y, ufo1_dir, ufo1_speed = 7, 3, 1, 1
-    planet_x, planet_y, planet_dir, planet_speed = 0, 2, 1, 1
-    planet_delay = 5  # Delay before the planet starts moving
+    planet_x, planet_y, planet_dir, planet_speed = 40, 20, 1, 2
+    planet_big_x, planet_big_y, planet_big_dir, planet_big_speed = 0, 2, 1, 1
+    planet_big_delay = 10  # Delay before the planet starts moving
 
     ufo1 = r"""
            .-""`""-.
@@ -114,6 +119,15 @@ try:
             \x_x_x_x_x_x/
     """
 
+    pic5 = r""" 
+       _..._
+     .:::::::.
+    :::::::::::
+    :::::::::::
+    `:::::::::'
+      `':::''
+    """
+
     alien1 = r"""
         .  .
          \/ 
@@ -135,6 +149,25 @@ try:
     """
 
     planet = r"""
+             ,,,,,,
+         o#'9MMHb':'-,o,
+     .oH":HH$' "' ' -*R&o,
+    dMMM*""'`'      .oM"HM?.
+  ,MMM'          "HLbd< ?&H\
+ .:MH ."\          ` MM  MM&b
+. "*H    -        &MMMMMMMMMH:
+.    dboo        MMMMMMMMMMMM.
+.   dMMMMMMb      *MMMMMMMMMP.
+.    MMMMMMMP        *MMMMMP .
+ '    `#MMMMM           MM6P ,
+  '    `MMMP"           HM*`,
+   '    :MM             .- ,
+    '.   `#?..  .       ..'
+       -.   .         .-
+         ''-.oo,oo.-''
+    """
+
+    planet_big = r"""
                          .--------------.
                     .---'  X        .    `---.
                  .-'    .    X  .         .   `-.
@@ -166,22 +199,22 @@ try:
                          `--------------'
     """
 
-    planet_delay_end = time.time() + planet_delay
+    planet_big_delay_end = time.time() + planet_big_delay
 
     while True:
         stdscr.clear()
 
         term_width, term_height = get_terminal_size(stdscr)
-        if time.time() >= planet_delay_end:
-            planet_x += planet_dir * planet_speed
+        if time.time() >= planet_big_delay_end:
+            planet_big_x += planet_big_dir * planet_big_speed
 
-            if planet_x + len(planet.split("\n")[0]) >= term_width - 1:
-                planet_dir = -1
+            if planet_big_x + len(planet_big.split("\n")[0]) >= term_width - 1:
+                planet_big_dir = -1
 
-            if planet_x <= 0:
-                planet_dir = 1
+            if planet_big_x <= 0:
+                planet_big_dir = 1
 
-        draw_picture_with_transparency(stdscr, planet_x, planet_y, planet, 4)
+        draw_picture_with_transparency(stdscr, planet_big_x, planet_big_y, planet_big, 4)
 
         for x, y in random.sample(positions, len(positions) // 2):
             stdscr.addstr(y, x, "+", curses.color_pair(2))
@@ -195,9 +228,11 @@ try:
         draw_picture_with_transparency(stdscr, pic_x, pic_y, pic, 2)
         draw_picture_with_transparency(stdscr, pic2_x, pic2_y, pic2, 5)
         draw_picture_with_transparency(stdscr, pic3_x, pic3_y, pic3, 3)
-        draw_picture_with_transparency(stdscr, pic4_x, pic4_y, pic4, 1)
-        draw_picture_with_transparency(stdscr, alien1_x, alien1_y, alien1 if alien1_dir == 1 else alien2, 1)
-        draw_picture_with_transparency(stdscr, ufo1_x, ufo1_y, ufo1 if ufo1_dir == 1 else ufo2, 2)
+        draw_picture_with_transparency(stdscr, pic4_x, pic4_y, pic4, 4)
+        draw_picture_with_transparency(stdscr, pic5_x, pic5_y, pic5, 6)
+        draw_picture_with_transparency(stdscr, alien1_x, alien1_y, alien1 if alien1_dir == 1 else alien2, 6)
+        draw_picture_with_transparency(stdscr, ufo1_x, ufo1_y, ufo1 if ufo1_dir == 1 else ufo2, 7)
+        draw_picture_with_transparency(stdscr, planet_x, planet_y, planet, 1)
 
         pic_x += pic_dir * pic_speed
         if pic_x <= 0 or pic_x + len(pic.split("\n")[0]) >= term_width:
@@ -214,6 +249,14 @@ try:
         pic4_x += pic4_dir * pic4_speed
         if pic4_x <= 0 or pic4_x >= term_width - 1:
             pic4_dir = -pic4_dir
+
+        pic5_x += pic5_dir * pic5_speed
+        if pic5_x <= 0 or pic5_x >= term_width - 1:
+            pic5_dir = -pic5_dir
+
+        planet_x += planet_dir * planet_speed
+        if planet_x <= 0 or planet_x >= term_width - 1:
+            planet_dir = -planet_dir
 
         alien1_x += alien1_dir * alien1_speed
         if alien1_x <= 0 or alien1_x + 7 >= term_width:
